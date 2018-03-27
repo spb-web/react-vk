@@ -96,13 +96,26 @@ export class VK extends React.Component {
     this._mounted = false;
   }
 
+  setPropsToChildren = children => {
+    return React.Children.map(children, child => {
+      if (!React.isValidElement(child)) {
+        return child;
+      }
+
+      const props = { ...child.props, vk: this.state.vk };
+
+      if (child.props.children) {
+        props.children = this.setPropsToChildren(child.props.children);
+      }
+
+      return React.cloneElement(child, props);
+    })
+  }
+
   render() {
     const { vk } = this.state;
-    const childrenWithProps = React.Children.map(this.props.children, child =>
-      React.cloneElement(child, {
-        vk: vk,
-      })
-    );
+    const childrenWithProps = this.setPropsToChildren(this.props.children);
+
     return vk ? <div>{childrenWithProps}</div> : null;
   }
 }
