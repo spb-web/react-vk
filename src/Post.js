@@ -12,12 +12,20 @@ export class Post extends React.Component {
     }),
   };
 
-  static defaultProps = {
-    elementId: 'vk_post',
-  };
+  state = {}
+
+  getElementId() {
+    return 'vk_post_'+ Date.now().toString(32) + Math.random().toString(32)
+  }
 
   mount() {
-    const { vk, elementId, ownerId, postId, hash, options } = this.props;
+    const {
+      vk, ownerId, postId, hash, options,
+      elementId = this.getElementId()
+    } = this.props;
+
+    this.setState({ elementId })
+
     vk.Widgets.Post(elementId, ownerId, postId, hash, options);
   }
 
@@ -26,7 +34,8 @@ export class Post extends React.Component {
   }
 
   render() {
-    const { elementId } = this.props;
+    const { elementId } = this.state;
+
     return <div id={elementId} />;
   }
 }
